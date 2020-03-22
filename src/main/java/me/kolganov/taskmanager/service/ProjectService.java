@@ -8,4 +8,5 @@ public interface ProjectService {
     Project saveOrUpdate(Project project);
     Project findOne(String identifier);
     List<Project> findAll();
+    void delete(String identifier);
 }

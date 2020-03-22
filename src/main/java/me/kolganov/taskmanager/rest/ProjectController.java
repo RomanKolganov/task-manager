@@ -38,4 +38,11 @@ public class ProjectController {
         return ResponseEntity.status(HttpStatus.OK).body(
                 projectService.findAll().stream().collect(Collectors.toList()));
     }
+
+    @DeleteMapping("api/project/{identifier}")
+    public ResponseEntity<?> deleteProject(@PathVariable("identifier") String identifier) {
+        projectService.delete(identifier);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body("Project with ID: '" + identifier.toUpperCase() + "' was deleted");
+    }
 }

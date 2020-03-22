@@ -5,6 +5,7 @@ import me.kolganov.taskmanager.domain.Project;
 import me.kolganov.taskmanager.exceptions.ProjectIdException;
 import me.kolganov.taskmanager.repository.ProjectRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -32,5 +33,14 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public List<Project> findAll() {
         return projectRepository.findAll();
+    }
+
+    @Override
+    @Transactional
+    public void delete(String identifier) {
+        projectRepository.findByIdentifier(identifier.toUpperCase())
+                .orElseThrow(() -> new ProjectIdException("Project ID '" + identifier.toUpperCase() + "' dose not exist"));
+
+        projectRepository.deleteByIdentifier(identifier.toUpperCase());
     }
 }
