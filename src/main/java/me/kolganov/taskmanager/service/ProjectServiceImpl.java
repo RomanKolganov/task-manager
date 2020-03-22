@@ -6,6 +6,8 @@ import me.kolganov.taskmanager.exceptions.ProjectIdException;
 import me.kolganov.taskmanager.repository.ProjectRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class ProjectServiceImpl implements ProjectService {
@@ -22,8 +24,13 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public Project findProject(String identifier) {
+    public Project findOne(String identifier) {
         return projectRepository.findByIdentifier(identifier.toUpperCase())
                 .orElseThrow(() -> new ProjectIdException("Project ID '" + identifier.toUpperCase() + "' dose not exist"));
+    }
+
+    @Override
+    public List<Project> findAll() {
+        return projectRepository.findAll();
     }
 }

@@ -10,6 +10,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -28,7 +29,13 @@ public class ProjectController {
 
     @GetMapping("api/project/{identifier}")
     public ResponseEntity<?> getProject(@PathVariable("identifier") String identifier) {
-        Project project = projectService.findProject(identifier);
+        Project project = projectService.findOne(identifier);
         return ResponseEntity.status(HttpStatus.OK).body(project);
+    }
+
+    @GetMapping("api/project")
+    public ResponseEntity<?> getAllProjects() {
+        return ResponseEntity.status(HttpStatus.OK).body(
+                projectService.findAll().stream().collect(Collectors.toList()));
     }
 }
