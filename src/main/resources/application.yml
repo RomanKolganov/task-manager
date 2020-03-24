@@ -1,0 +1,17 @@
+spring:
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+  h2:
+    console:
+      enabled: true
+  datasource:
+    #    sqlScriptEncoding: UTF-8
+    #    url: jdbc:h2:mem:testdb
+    #    initialization-mode: always
+    url: jdbc:postgresql://localhost:5432/app_db
+    driverClassName: org.postgresql.Driver
+    username: app_user
+    password:
+    initialization-mode: always
