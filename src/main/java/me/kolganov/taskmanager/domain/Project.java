@@ -6,7 +6,7 @@ import lombok.Data;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
-import java.sql.Date;
+import java.util.Date;
 
 @Data
 @Entity
@@ -29,18 +29,27 @@ public class Project {
     private String description;
 
     @Column(name = "START_DATE")
-    @JsonFormat(pattern = "dd.mm.yyyy")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private Date startDate;
 
     @Column(name = "END_DATE")
-    @JsonFormat(pattern = "dd.mm.yyyy")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private Date endDate;
 
-    @Column(name = "CREATE_AT")
-    @JsonFormat(pattern = "dd.mm.yyyy")
+    @Column(name = "CREATE_AT", updatable = false)
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private Date createAt;
 
     @Column(name = "UPDATE_AT")
-    @JsonFormat(pattern = "dd.mm.yyyy")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private Date updateAt;
+
+    @PrePersist
+    protected void onCreate() {
+        this.createAt = new Date();
+    }
+    @PreUpdate
+    protected void onUpdate() {
+        this.updateAt = new Date();
+    }
 }
