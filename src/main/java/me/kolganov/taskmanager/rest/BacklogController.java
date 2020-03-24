@@ -40,4 +40,16 @@ public class BacklogController {
                                             @PathVariable("project_sequence") String projectSequence) {
         return ResponseEntity.status(HttpStatus.OK).body(projectTaskService.findOne(backlogId, projectSequence));
     }
+
+    @PutMapping("api/backlog/{backlog_id}/{project_sequence}")
+    public ResponseEntity<?> updateTask(@PathVariable("backlog_id") String backlogId,
+                                        @PathVariable("project_sequence") String projectSequence,
+                                        @Valid @RequestBody ProjectTask projectTask,
+                                        BindingResult result) {
+        ResponseEntity<?> errorMap = mapValidationErrorService.validate(result);
+        if (errorMap != null)
+            return errorMap;
+
+        return ResponseEntity.status(HttpStatus.OK).body(projectTaskService.update(backlogId, projectSequence, projectTask));
+    }
 }

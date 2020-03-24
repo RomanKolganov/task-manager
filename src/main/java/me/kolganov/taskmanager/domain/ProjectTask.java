@@ -39,11 +39,11 @@ public class ProjectTask {
     private String projectIdentifier;
 
     @Column(name = "CREATE_AT", updatable = false)
-    @JsonFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createAt;
 
     @Column(name = "UPDATE_AT")
-    @JsonFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date updateAt;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.REFRESH)

@@ -7,6 +7,7 @@ import me.kolganov.taskmanager.exceptions.ProjectNotFoundException;
 import me.kolganov.taskmanager.repository.BacklogRepository;
 import me.kolganov.taskmanager.repository.ProjectRepository;
 import me.kolganov.taskmanager.repository.ProjectTaskRepository;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -57,5 +58,20 @@ public class ProjectTaskServiceImpl implements ProjectTaskService {
                         .findFirst()
                         .orElseThrow(() -> new ProjectNotFoundException(String.format("Task ID '%s' dose not exist in Project ID '%s'", projectSequence.toUpperCase(), backlogId.toUpperCase()))))
                 .orElseThrow(() -> new ProjectIdException(String.format("Project ID '%s' dose not exist", backlogId.toUpperCase())));
+    }
+
+    @Override
+    public ProjectTask update(String backlogId, String projectSequence, ProjectTask updatedTask) {
+        ProjectTask projectTask = backlogRepository.findByProjectIdentifier(backlogId.toUpperCase())
+                .map(backlog -> backlog.getProjectTasks().stream()
+                        .filter(task -> projectSequence.equals(task.getProjectSequence()))
+                        .findFirst()
+                        .orElseThrow(() -> new ProjectNotFoundException(String.format("Task ID '%s' dose not exist in Project ID '%s'", projectSequence.toUpperCase(), backlogId.toUpperCase()))))
+                .orElseThrow(() -> new ProjectIdException(String.format("Project ID '%s' dose not exist", backlogId.toUpperCase())));
+
+        updatedTask.setProjectSequence(projectSequence.toUpperCase());
+        updatedTask.setId(projectTask.getId());
+        BeanUtils.copyProperties(updatedTask, projectTask);
+        return projectTaskRepository.save(projectTask);
     }
 }
