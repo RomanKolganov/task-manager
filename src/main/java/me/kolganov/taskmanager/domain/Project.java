@@ -2,6 +2,7 @@ package me.kolganov.taskmanager.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -9,7 +10,8 @@ import javax.validation.constraints.Size;
 import java.util.Date;
 
 @Data
-@Entity
+@NoArgsConstructor
+@Entity(name = "PROJECTS")
 public class Project {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -43,6 +45,9 @@ public class Project {
     @Column(name = "UPDATE_AT")
     @JsonFormat(pattern = "yyyy-MM-dd")
     private Date updateAt;
+
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "project")
+    private Backlog backlog;
 
     @PrePersist
     protected void onCreate() {
