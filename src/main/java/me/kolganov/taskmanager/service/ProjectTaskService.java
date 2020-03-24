@@ -7,4 +7,5 @@ import java.util.List;
 public interface ProjectTaskService {
     ProjectTask addTask(String projectIdentifier, ProjectTask projectTask);
     List<ProjectTask> getAllByProjectIdentifier(String projectIdentifier);
+    ProjectTask findOne(String backlogId, String projectSequence);
 }
