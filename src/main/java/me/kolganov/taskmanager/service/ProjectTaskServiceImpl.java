@@ -1,6 +1,7 @@
 package me.kolganov.taskmanager.service;
 
 import lombok.RequiredArgsConstructor;
+import me.kolganov.taskmanager.domain.Project;
 import me.kolganov.taskmanager.domain.ProjectTask;
 import me.kolganov.taskmanager.exceptions.ProjectIdException;
 import me.kolganov.taskmanager.exceptions.ProjectNotFoundException;
@@ -52,26 +53,31 @@ public class ProjectTaskServiceImpl implements ProjectTaskService {
 
     @Override
     public ProjectTask findOne(String backlogId, String projectSequence) {
+        return getValidProjectTask(backlogId, projectSequence);
+    }
+
+    @Override
+    public ProjectTask update(String backlogId, String projectSequence, ProjectTask updatedTask) {
+        ProjectTask projectTask = getValidProjectTask(backlogId, projectSequence);
+
+        updatedTask.setProjectSequence(projectSequence.toUpperCase());
+        updatedTask.setId(projectTask.getId());
+        BeanUtils.copyProperties(updatedTask, projectTask);
+        return projectTaskRepository.save(projectTask);
+    }
+
+    @Override
+    public void delete(String backlogId, String projectSequence) {
+        ProjectTask projectTask = getValidProjectTask(backlogId, projectSequence);
+        projectTaskRepository.delete(projectTask);
+    }
+
+    private ProjectTask getValidProjectTask(String backlogId, String projectSequence) {
         return backlogRepository.findByProjectIdentifier(backlogId.toUpperCase())
                 .map(backlog -> backlog.getProjectTasks().stream()
                         .filter(task -> projectSequence.equals(task.getProjectSequence()))
                         .findFirst()
                         .orElseThrow(() -> new ProjectNotFoundException(String.format("Task ID '%s' dose not exist in Project ID '%s'", projectSequence.toUpperCase(), backlogId.toUpperCase()))))
                 .orElseThrow(() -> new ProjectIdException(String.format("Project ID '%s' dose not exist", backlogId.toUpperCase())));
-    }
-
-    @Override
-    public ProjectTask update(String backlogId, String projectSequence, ProjectTask updatedTask) {
-        ProjectTask projectTask = backlogRepository.findByProjectIdentifier(backlogId.toUpperCase())
-                .map(backlog -> backlog.getProjectTasks().stream()
-                        .filter(task -> projectSequence.equals(task.getProjectSequence()))
-                        .findFirst()
-                        .orElseThrow(() -> new ProjectNotFoundException(String.format("Task ID '%s' dose not exist in Project ID '%s'", projectSequence.toUpperCase(), backlogId.toUpperCase()))))
-                .orElseThrow(() -> new ProjectIdException(String.format("Project ID '%s' dose not exist", backlogId.toUpperCase())));
-
-        updatedTask.setProjectSequence(projectSequence.toUpperCase());
-        updatedTask.setId(projectTask.getId());
-        BeanUtils.copyProperties(updatedTask, projectTask);
-        return projectTaskRepository.save(projectTask);
     }
 }

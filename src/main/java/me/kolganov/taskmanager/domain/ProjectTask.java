@@ -46,7 +46,7 @@ public class ProjectTask {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date updateAt;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.REFRESH)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "BACKLOG_ID", updatable = false, nullable = false)
     @JsonIgnore
     private Backlog backlog;

@@ -9,4 +9,5 @@ public interface ProjectTaskService {
     List<ProjectTask> getAllByProjectIdentifier(String projectIdentifier);
     ProjectTask findOne(String backlogId, String projectSequence);
     ProjectTask update(String backlogId, String projectSequence, ProjectTask updatedTask);
+    void delete(String backlogId, String projectSequence);
 }
