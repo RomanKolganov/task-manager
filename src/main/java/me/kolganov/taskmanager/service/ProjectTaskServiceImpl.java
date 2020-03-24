@@ -46,7 +46,7 @@ public class ProjectTaskServiceImpl implements ProjectTaskService {
     @Override
     public List<ProjectTask> getAllByProjectIdentifier(String projectIdentifier) {
         projectRepository.findByIdentifier(projectIdentifier)
-                .orElseThrow(() -> new ProjectIdException(String.format("Project ID '%s' dose not exist", projectIdentifier.toUpperCase())));
+                .orElseThrow(() -> new ProjectNotFoundException(String.format("Project ID '%s' dose not exist", projectIdentifier.toUpperCase())));
 
         return projectTaskRepository.findByProjectIdentifierOrderByPriority(projectIdentifier);
     }
