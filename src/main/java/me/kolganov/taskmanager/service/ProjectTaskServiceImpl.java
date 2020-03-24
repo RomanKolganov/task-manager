@@ -6,6 +6,8 @@ import me.kolganov.taskmanager.repository.BacklogRepository;
 import me.kolganov.taskmanager.repository.ProjectTaskRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class ProjectTaskServiceImpl implements ProjectTaskService {
@@ -32,5 +34,10 @@ public class ProjectTaskServiceImpl implements ProjectTaskService {
                     }
                 });
         return projectTaskRepository.save(projectTask);
+    }
+
+    @Override
+    public List<ProjectTask> getAllByProjectIdentifier(String projectIdentifier) {
+        return projectTaskRepository.findByProjectIdentifierOrderByPriority(projectIdentifier);
     }
 }

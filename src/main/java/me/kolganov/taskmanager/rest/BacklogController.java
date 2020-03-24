@@ -10,6 +10,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @CrossOrigin
 @RestController
@@ -27,5 +28,10 @@ public class BacklogController {
             return errorMap;
 
         return ResponseEntity.status(HttpStatus.CREATED).body(projectTaskService.addTask(backlogId, projectTask));
+    }
+
+    @GetMapping("api/backlog/{backlog_id}")
+    public ResponseEntity<List<ProjectTask>> getBacklog(@PathVariable("backlog_id") String backlogId) {
+        return ResponseEntity.status(HttpStatus.OK).body(projectTaskService.getAllByProjectIdentifier(backlogId));
     }
 }
