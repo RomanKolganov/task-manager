@@ -16,20 +16,20 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class ProjectTaskServiceImpl implements ProjectTaskService {
-    private final BacklogRepository backlogRepository;
     private final ProjectTaskRepository projectTaskRepository;
     private final ProjectRepository projectRepository;
 
     @Override
-    public ProjectTask addTask(String projectIdentifier, ProjectTask projectTask) {
-        return backlogRepository.findByProjectIdentifier(projectIdentifier.toUpperCase())
-                .map(b -> {
-                    projectTask.setBacklog(b);
-                    Integer backlogSequence = b.getPTSequence();
+    public ProjectTask addTask(String projectIdentifier, ProjectTask projectTask, String username) {
+        return projectRepository.findByIdentifierAndProjectLeader(projectIdentifier.toUpperCase(), username)
+                .map(Project::getBacklog)
+                .map(backlog -> {
+                    projectTask.setBacklog(backlog);
+                    Integer backlogSequence = backlog.getPTSequence();
                     backlogSequence++;
-                    b.setPTSequence(backlogSequence);
-                    projectTask.setProjectSequence(b.getProjectIdentifier() + "-" + backlogSequence);
-                    projectTask.setProjectIdentifier(b.getProjectIdentifier());
+                    backlog.setPTSequence(backlogSequence);
+                    projectTask.setProjectSequence(backlog.getProjectIdentifier() + "-" + backlogSequence);
+                    projectTask.setProjectIdentifier(backlog.getProjectIdentifier());
 
                     if (projectTask.getPriority() == null || projectTask.getPriority() == 0) {
                         projectTask.setPriority(3);
@@ -39,26 +39,25 @@ public class ProjectTaskServiceImpl implements ProjectTaskService {
                         projectTask.setStatus("TODO");
                     }
                     return projectTaskRepository.save(projectTask);
-                })
-                .orElseThrow(() -> new ProjectNotFoundException("Project dose not exist"));
+                }).orElseThrow(() -> new ProjectNotFoundException("Project dose not exist"));
     }
 
     @Override
-    public List<ProjectTask> getAllByProjectIdentifier(String projectIdentifier) {
-        projectRepository.findByIdentifier(projectIdentifier)
+    public List<ProjectTask> getAllByProjectIdentifier(String projectIdentifier, String username) {
+        projectRepository.findByIdentifierAndProjectLeader(projectIdentifier.toUpperCase(), username)
                 .orElseThrow(() -> new ProjectNotFoundException(String.format("Project ID '%s' dose not exist", projectIdentifier.toUpperCase())));
 
-        return projectTaskRepository.findByProjectIdentifierOrderByPriority(projectIdentifier);
+        return projectTaskRepository.findByProjectIdentifierOrderByPriority(projectIdentifier.toUpperCase());
     }
 
     @Override
-    public ProjectTask findOne(String backlogId, String projectSequence) {
-        return getValidProjectTask(backlogId, projectSequence);
+    public ProjectTask findOne(String backlogId, String projectSequence, String username) {
+        return getValidProjectTask(backlogId, projectSequence, username);
     }
 
     @Override
-    public ProjectTask update(String backlogId, String projectSequence, ProjectTask updatedTask) {
-        ProjectTask projectTask = getValidProjectTask(backlogId, projectSequence);
+    public ProjectTask update(String backlogId, String projectSequence, ProjectTask updatedTask, String username) {
+        ProjectTask projectTask = getValidProjectTask(backlogId, projectSequence, username);
 
         updatedTask.setProjectSequence(projectSequence.toUpperCase());
         updatedTask.setId(projectTask.getId());
@@ -67,13 +66,14 @@ public class ProjectTaskServiceImpl implements ProjectTaskService {
     }
 
     @Override
-    public void delete(String backlogId, String projectSequence) {
-        ProjectTask projectTask = getValidProjectTask(backlogId, projectSequence);
+    public void delete(String backlogId, String projectSequence, String username) {
+        ProjectTask projectTask = getValidProjectTask(backlogId, projectSequence, username);
         projectTaskRepository.delete(projectTask);
     }
 
-    private ProjectTask getValidProjectTask(String backlogId, String projectSequence) {
-        return backlogRepository.findByProjectIdentifier(backlogId.toUpperCase())
+    private ProjectTask getValidProjectTask(String backlogId, String projectSequence, String username) {
+        return projectRepository.findByIdentifierAndProjectLeader(backlogId.toUpperCase(), username)
+                .map(Project::getBacklog)
                 .map(backlog -> backlog.getProjectTasks().stream()
                         .filter(task -> projectSequence.equals(task.getProjectSequence()))
                         .findFirst()
