@@ -14,4 +14,6 @@ spring:
     driverClassName: org.postgresql.Driver
     username: udywhccahycjia
     password: 36a8f5965c323599d2171471d908ff3c36e2aa56bb8752c52522ed0ff98f4c0a
-    initialization-mode: always
+server:
+  port: ${PORT:8080}
+
