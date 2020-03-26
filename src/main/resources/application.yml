@@ -10,8 +10,8 @@ spring:
     #    sqlScriptEncoding: UTF-8
     #    url: jdbc:h2:mem:testdb
     #    initialization-mode: always
-    url: jdbc:postgresql://localhost:5432/app_db
+    url: jdbc:postgresql://ec2-54-246-90-10.eu-west-1.compute.amazonaws.com:5432/d63ioiv9bi9o1n
     driverClassName: org.postgresql.Driver
-    username: app_user
-    password:
+    username: udywhccahycjia
+    password: 36a8f5965c323599d2171471d908ff3c36e2aa56bb8752c52522ed0ff98f4c0a
     initialization-mode: always
